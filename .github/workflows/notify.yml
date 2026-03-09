@@ -1,0 +1,17 @@
+name: Notify Workflow Run Status
+
+on:
+  workflow_run:
+    workflows:
+      - Build and deploy to lambda
+      - Manual trigger deploy workflow
+      - Run test on Pull Request
+    types:
+      - completed
+jobs:
+  notify:
+    uses: Revenge-Games/workflows-template/.github/workflows/notify.yml@main
+    if: always()
+    secrets:
+      LARK_WEBHOOK: ${{ secrets.LARK_WEBHOOK }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}

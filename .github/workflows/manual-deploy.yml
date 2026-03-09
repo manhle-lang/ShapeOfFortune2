@@ -1,0 +1,35 @@
+name: Manual trigger deploy workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: "Which ENV should be deployed"
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - dev
+        - staging
+        - sbox
+        - sbox-ca
+        - prod
+        - mkt
+        - mkt-eu
+        - prd-eu
+        - prod-asia
+        - mkt-asia
+        
+      version:
+        description: "Lambda version"
+        required: true
+
+jobs:
+  Deploy:
+    uses: Revenge-Games/workflows-template/.github/workflows/manual-deploy-logic-lambda.yml@main
+    with:
+      env: ${{ inputs.env }}
+      version: ${{ inputs.version }}
+    secrets:
+      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -1,0 +1,29 @@
+name: Build and deploy to lambda
+
+on:
+  push:
+    branches:
+      - "main"
+      - "releases/**"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy_lambda:
+    uses: Revenge-Games/workflows-template/.github/workflows/deploy-logic-lambda-org-ncc-cpp.yml@main
+    with:
+      env: dev
+    secrets:
+      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  build_and_push:
+    uses: Revenge-Games/workflows-template/.github/workflows/build-logic-clone-ncc.yml@main
+    with:
+      AWS_ECR_REGISTRY: ${{ vars.AWS_ECR_REGISTRY }}
+      AWS_REGION: "ap-southeast-1"
+    secrets:
+      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}

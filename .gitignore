@@ -1,0 +1,12 @@
+node_modules/
+logs/
+build/
+.DS_Store
+.env
+e2e-report.html
+coverage/
+*.log
+
+# Claude files
+CLAUDE.md
+claude/

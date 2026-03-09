@@ -1,0 +1,52 @@
+{
+  "name": "shapes-of-fortune",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "pnpm wrap-native-dev && tsc && jest",
+    "format": "prettier --write \"{src,tests}/**/*.ts\"",
+    "wrap-native-dev": "node-gyp clean && node-gyp configure && node-gyp build --targets=shape_of_fortune",
+    "wrap-native-release": "node-gyp clean && node-gyp configure && node-gyp build --targets=shape_of_fortune --release",
+    "build-ncc": "pnpm wrap-native-release && node build.js",
+    "build": "pnpm build-ncc",
+    "start": "RG_LOG_NATIVE=true node build/src/server.js",
+    "dev": "pnpm wrap-native-dev && nest start --watch",
+    "build-e2e": "pnpm wrap-native-release && tsc -p ./tsconfig.e2e.json",
+    "e2e": "tsc -p ./tsconfig.e2e.json && node build/tests/e2e/index.js",
+    "seed-cheats": "pnpm wrap-native-dev && tsx src/cheats/cheat.generator.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@fastify/aws-lambda": "latest",
+    "@revenge-games/logic-sharedlibs": "1.0.24",
+    "aws-lambda-fastify": "latest",
+    "decimal.js": "^10.4.3",
+    "fastify": "^4.27.0",
+    "fluent-json-schema": "^4.2.1",
+    "lambda": "latest",
+    "pino": "^9.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.1",
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.14.2",
+    "@vercel/ncc": "^0.38.3",
+    "bindings": "^1.5.0",
+    "eslint": "^9.25.1",
+    "globals": "^16.1.0",
+    "jest": "^29.7.0",
+    "node-addon-api": "^8.5.0",
+    "node-gyp": "^11.3.0",
+    "pino-pretty": "^11.1.0",
+    "prettier": "^3.5.3",
+    "ts-jest": "^29.1.5",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.15.1",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^8.31.0"
+  },
+  "keywords": []
+}
