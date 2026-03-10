@@ -79,6 +79,7 @@ export interface IGameCustomDescriptionResponse {
 export interface IGameCustomBetData {
   // custom based on game specific
   betMode: IMathBetMode;
+  isBuyFeature?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -92,6 +93,9 @@ export interface IGameCustomSpinResult {
   reelMode: number;
   multiplier: number;
   multiplierReelVector: number[];
+  teaser: boolean;
+  featureBuy: boolean;
+  isMaxWin: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

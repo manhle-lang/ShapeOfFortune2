@@ -385,18 +385,18 @@ GameConfigBase::GameConfigBase()
 
     fgDiamondMultiplierWeightage =
         {
-            {0, 7, 6, 1},    // Rich 2 - 3 Reel High Multiplier
-            {0, 7, 6, 1},    // Rich 4 - 5 Reel High Multiplier
-            {0, 7, 6, 1},    // Normal 6 - 7 Reel High Multiplier
-            {0, 7, 6, 1},    // Normal 9 - 10 Reel High Multiplier
-            {0, 16, 26, 0},  // Rich 2 - 3 Reel Normal Multiplier
-            {0, 16, 26, 0},  // Rich 4 - 5 Reel Normal Multiplier
-            {0, 16, 26, 0},  // Normal 6 - 7 Reel Normal Multiplier
-            {0, 16, 26, 0},  // Normal 9 - 10 Reel Normal Multiplier
-            {0, 1, 0, 0},    // Rich 2 - 3 Reel Low Multiplier
-            {0, 1, 0, 0},    // Rich 4 - 5 Reel Low Multiplier
-            {0, 1, 0, 0},    // Normal 6 - 7 Reel Low Multiplier
-            {0, 1, 0, 0},    // Normal 9 - 10 Reel Low Multiplier
+            {0, 7, 6, 1},   // Rich 2 - 3 Reel High Multiplier
+            {0, 7, 6, 1},   // Rich 4 - 5 Reel High Multiplier
+            {0, 7, 6, 1},   // Normal 6 - 7 Reel High Multiplier
+            {0, 7, 6, 1},   // Normal 9 - 10 Reel High Multiplier
+            {0, 16, 26, 0}, // Rich 2 - 3 Reel Normal Multiplier
+            {0, 16, 26, 0}, // Rich 4 - 5 Reel Normal Multiplier
+            {0, 16, 26, 0}, // Normal 6 - 7 Reel Normal Multiplier
+            {0, 16, 26, 0}, // Normal 9 - 10 Reel Normal Multiplier
+            {0, 1, 0, 0},   // Rich 2 - 3 Reel Low Multiplier
+            {0, 1, 0, 0},   // Rich 4 - 5 Reel Low Multiplier
+            {0, 1, 0, 0},   // Normal 6 - 7 Reel Low Multiplier
+            {0, 1, 0, 0},   // Normal 9 - 10 Reel Low Multiplier
         };
 
     fgReelWeightage =
@@ -428,14 +428,14 @@ GameConfigBase::GameConfigBase()
             // Circle Mode
             {
                 //    -1    0    1    2    3    4    5    6    7    8    9
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},     // Max Win Reel
-                {0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5},     // Rich 2 - 3 Reel
-                {0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5},     // Rich 4 - 5 Reel
-                {0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5},     // Normal 6 - 7 Reel
-                {0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5},     // Normal 9 - 10 Reel
-                {0, 1, 1, 2, 3, 3, 5, 4, 3, 2, 2},     // Normal 6 - 7 Reel Low Multiplier
-                {0, 1, 1, 2, 3, 3, 5, 4, 3, 2, 2},     // Normal 9 - 10 Reel Low Multiplier
-                {0, 20, 15, 12, 1, 1, 1, 1, 1, 1, 1},  // Poor Reel
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},    // Max Win Reel
+                {0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5},    // Rich 2 - 3 Reel
+                {0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5},    // Rich 4 - 5 Reel
+                {0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5},    // Normal 6 - 7 Reel
+                {0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5},    // Normal 9 - 10 Reel
+                {0, 1, 1, 2, 3, 3, 5, 4, 3, 2, 2},    // Normal 6 - 7 Reel Low Multiplier
+                {0, 1, 1, 2, 3, 3, 5, 4, 3, 2, 2},    // Normal 9 - 10 Reel Low Multiplier
+                {0, 20, 15, 12, 1, 1, 1, 1, 1, 1, 1}, // Poor Reel
             },
 
             // Triangle Mode

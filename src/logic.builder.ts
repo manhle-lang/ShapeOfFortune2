@@ -40,7 +40,7 @@ export class LogicBuilder {
     });
 
     if (betResult.isEndRound) {
-      stateResult.data = {}
+      stateResult.data = {};
       stateResult.engine = ENGINE_TYPE.ANYTHING;
       stateResult.freeSpins = 0;
     }
@@ -166,6 +166,8 @@ export class LogicBuilder {
       reelMode: mathSpinResult.reelMode,
       selectionMode: mathSpinResult.selectionMode,
       isMaxWin: mathSpinResult.isMaxWin,
+      teaser: mathSpinResult.teaser,
+      featureBuy: mathSpinResult.featureBuy,
     };
 
     return result;

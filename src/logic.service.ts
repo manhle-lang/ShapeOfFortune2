@@ -68,6 +68,7 @@ export class LogicService extends IBaseService {
       profile: GetProfileRTPPercent(playReq.profile),
       parentSpinResult: playReq.state?.data?.parentSpinResult,
       pastSpinResult: playReq.state?.data?.pastSpinResult,
+      featureBuy: playReq.bet.data?.isBuyFeature,
     });
 
     // // DO BUILDING RESULTS

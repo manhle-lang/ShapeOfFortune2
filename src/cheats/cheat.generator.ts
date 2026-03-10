@@ -16,6 +16,7 @@ const CHEATS_SEEDING: Partial<IGameCheatPayout> = {
   isTriggerBigWin: true,
   isTriggerMegaWin: true,
   isTriggerSuperMegaWin: true,
+  isTriggerFreeSpins: true,
   isTriggerMaxWin: true,
 };
 

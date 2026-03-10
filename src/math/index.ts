@@ -21,6 +21,14 @@ export interface IMathGameConfig {
   diamondMultiplierWeightage: number[][];
   mgReelWeightage: number[][];
   multiplierWeightage: number[][][];
+  freeGameChance: number[];
+  teaserChance: number[];
+  fgTriangleMultiplierWeightage: number[][];
+  fgDiamondMultiplierWeightage: number[][];
+  fgReelWeightage: number[][];
+  fbReelWeightage: number[][];
+  fgMultiplierWeightage: number[][][];
+  featureBuyCost: number[];
   baseBet: number;
   selectedPayLine: number;
   maxWinMultiplier: number;
@@ -52,6 +60,9 @@ interface IMathSpinResultOri {
   multiplier: number;
 
   triggerMaxWin: boolean;
+  teaser: boolean;
+  featureBuy: boolean;
+  totalFreeSpinsCount: number;
   totalFreeGameWin: number;
 }
 
@@ -78,6 +89,7 @@ export interface IMathSpinRequest {
   pastSpinResult?: IMathSpinResult;
   parentSpinResult?: IMathSpinResult;
   _rngCheatSeed?: string;
+  featureBuy?: boolean;
 }
 
 export const GameMath = {

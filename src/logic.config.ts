@@ -52,28 +52,52 @@ export const GetGameConfigs = (profile?: ProfileVersion): IGameConfig => {
 };
 
 export const BetConfigs: IBetConfigItem[] = [
+  // Feature Buy Configs
+  {
+    betMode: IMathBetMode.CIRCLE,
+    betCost: 25,
+    canUseThisFeature: (reqBet: IPlayBet<IGameCustomBetData>) =>
+      (reqBet.data?.betMode as IMathBetMode) === IMathBetMode.CIRCLE && !!reqBet.data?.isBuyFeature,
+    isCalculateBracketWithBetCost: true,
+  },
+  {
+    betMode: IMathBetMode.TRIANGLE,
+    betCost: 40,
+    canUseThisFeature: (reqBet: IPlayBet<IGameCustomBetData>) =>
+      (reqBet.data?.betMode as IMathBetMode) === IMathBetMode.TRIANGLE &&
+      !!reqBet.data?.isBuyFeature,
+    isCalculateBracketWithBetCost: true,
+  },
+  {
+    betMode: IMathBetMode.DIAMOND,
+    betCost: 80,
+    canUseThisFeature: (reqBet: IPlayBet<IGameCustomBetData>) =>
+      (reqBet.data?.betMode as IMathBetMode) === IMathBetMode.DIAMOND &&
+      !!reqBet.data?.isBuyFeature,
+    isCalculateBracketWithBetCost: true,
+  },
+  // Normal Spin Configs
   {
     betMode: IMathBetMode.CIRCLE,
     betCost: 1,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     canUseThisFeature: (reqBet: IPlayBet<IGameCustomBetData>) =>
-      !reqBet.data?.betMode || (reqBet.data.betMode as IMathBetMode) === IMathBetMode.CIRCLE,
+      !reqBet.data?.betMode ||
+      ((reqBet.data.betMode as IMathBetMode) === IMathBetMode.CIRCLE && !reqBet.data?.isBuyFeature),
     isCalculateBracketWithBetCost: false,
   },
   {
     betMode: IMathBetMode.TRIANGLE,
     betCost: 1,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     canUseThisFeature: (reqBet: IPlayBet<IGameCustomBetData>) =>
-      reqBet.data?.betMode === IMathBetMode.TRIANGLE,
+      (reqBet.data?.betMode as IMathBetMode) === IMathBetMode.TRIANGLE &&
+      !reqBet.data?.isBuyFeature,
     isCalculateBracketWithBetCost: false,
   },
   {
     betMode: IMathBetMode.DIAMOND,
     betCost: 1,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     canUseThisFeature: (reqBet: IPlayBet<IGameCustomBetData>) =>
-      reqBet.data?.betMode === IMathBetMode.DIAMOND,
+      (reqBet.data?.betMode as IMathBetMode) === IMathBetMode.DIAMOND && !reqBet.data?.isBuyFeature,
     isCalculateBracketWithBetCost: false,
   },
 ];

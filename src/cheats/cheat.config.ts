@@ -2,13 +2,6 @@ import { IMathGameConfig } from '../math';
 
 export const GetCheatConfigs = (): Partial<IMathGameConfig> => ({
   reelStripCircle: [
-    // Max Win Reel
-    [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-    ],
-
     // Rich 2 - 3 Reel
     [
       [
@@ -766,13 +759,13 @@ export const GetCheatConfigs = (): Partial<IMathGameConfig> => ({
   ],
 
   mgReelWeightage: [
-    // Circle Mode
-    [1, 10000, 50800, 1500000, 1500000, 1500000, 1500000, 3920000],
+    // Circle Mode (7 reels, no Max Win Reel)
+    [10000, 50800, 1500000, 1500000, 1500000, 1500000, 3920000],
 
-    // Triangle Mode
-    [1, 5000, 5000, 200000, 200000, 1000000, 3790000, 6350000, 5000000],
+    // Triangle Mode (8 reels, no Max Win Reel)
+    [5000, 5000, 200000, 200000, 1000000, 3790000, 6350000, 5000000],
 
-    // Diamond Mode
+    // Diamond Mode (14 reels)
     [1, 2, 30, 80, 5, 30, 60, 120, 15, 25, 155, 135, 100, 420],
   ],
 
@@ -822,6 +815,97 @@ export const GetCheatConfigs = (): Partial<IMathGameConfig> => ({
       [20, 20, 20, 20, 15, 15, 10, 5, 5, 5, 5], // Normal 9 - 10 Reel Low Multiplier
       [100, 100, 25, 20, 15, 15, 10, 5, 5, 5, 5], // Poor Reel - High Pay Symbol
       [100, 100, 25, 20, 15, 15, 10, 5, 5, 5, 5], // Poor Reel - Low Pay Symbol
+    ],
+  ],
+
+  freeGameChance: [75, 120, 180],
+  teaserChance: [50, 100, 150],
+  featureBuyCost: [25, 40, 80],
+
+  fgTriangleMultiplierWeightage: [
+    [0, 1, 3], // Rich 2 - 3 Reel
+    [0, 1, 3], // Rich 4 - 5 Reel
+    [0, 0, 3], // Normal 6 - 7 Reel
+    [0, 0, 3], // Normal 9 - 10 Reel
+    [0, 1, 0], // Rich 2 - 3 Reel Low Multiplier
+    [0, 1, 0], // Rich 4 - 5 Reel Low Multiplier
+    [0, 1, 0], // Normal 6 - 7 Reel Low Multiplier
+    [0, 1, 0], // Normal 9 - 10 Reel Low Multiplier
+  ],
+
+  fgDiamondMultiplierWeightage: [
+    [0, 7, 6, 1], // Rich 2 - 3 Reel High Multiplier
+    [0, 7, 6, 1], // Rich 4 - 5 Reel High Multiplier
+    [0, 7, 6, 1], // Normal 6 - 7 Reel High Multiplier
+    [0, 7, 6, 1], // Normal 9 - 10 Reel High Multiplier
+    [0, 16, 26, 0], // Rich 2 - 3 Reel Normal Multiplier
+    [0, 16, 26, 0], // Rich 4 - 5 Reel Normal Multiplier
+    [0, 16, 26, 0], // Normal 6 - 7 Reel Normal Multiplier
+    [0, 16, 26, 0], // Normal 9 - 10 Reel Normal Multiplier
+    [0, 1, 0, 0], // Rich 2 - 3 Reel Low Multiplier
+    [0, 1, 0, 0], // Rich 4 - 5 Reel Low Multiplier
+    [0, 1, 0, 0], // Normal 6 - 7 Reel Low Multiplier
+    [0, 1, 0, 0], // Normal 9 - 10 Reel Low Multiplier
+  ],
+
+  fgReelWeightage: [
+    // Circle Mode
+    [1, 73000, 232000, 260000, 170000, 220000, 180000, 120000],
+    // Triangle Mode
+    [1, 1, 10, 10, 50, 50, 35, 10],
+    // Diamond Mode
+    [1, 2, 10, 40, 3, 17, 20, 20, 65, 45, 10, 10],
+  ],
+
+  fbReelWeightage: [
+    // Circle Mode
+    [1, 11455000, 18277000, 16500000, 13961500, 16500000, 16500000, 5838500],
+    // Triangle Mode
+    [10, 30, 100, 100, 100, 107, 110, 110],
+    // Diamond Mode
+    [10, 10, 60, 60, 50, 50, 60, 60, 70, 60, 20, 33],
+  ],
+
+  fgMultiplierWeightage: [
+    // Circle Mode
+    [
+      //    -1    0    1    2    3    4    5    6    7    8    9
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], // Max Win Reel
+      [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5], // Rich 2 - 3 Reel
+      [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5], // Rich 4 - 5 Reel
+      [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5], // Normal 6 - 7 Reel
+      [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5], // Normal 9 - 10 Reel
+      [0, 1, 1, 2, 3, 3, 5, 4, 3, 2, 2], // Normal 6 - 7 Reel Low Multiplier
+      [0, 1, 1, 2, 3, 3, 5, 4, 3, 2, 2], // Normal 9 - 10 Reel Low Multiplier
+      [0, 20, 15, 12, 1, 1, 1, 1, 1, 1, 1], // Poor Reel
+    ],
+    // Triangle Mode
+    [
+      //     -1     0     1     2     3     4     5     6     7     8     9
+      [0, 2, 3, 5, 5, 6, 6, 5, 4, 3, 2], // Rich 2 - 3 Reel
+      [0, 2, 3, 5, 5, 6, 6, 5, 4, 3, 2], // Rich 4 - 5 Reel
+      [0, 0, 5, 5, 3, 1, 0, 0, 0, 0, 0], // Normal 6 - 7 Reel
+      [0, 0, 5, 5, 3, 1, 0, 0, 0, 0, 0], // Normal 9 - 10 Reel
+      [0, 1, 1, 1, 1, 1, 1, 1, 5, 5, 7], // Rich 2 - 3 Reel Low Multiplier
+      [0, 1, 1, 1, 1, 1, 1, 1, 5, 5, 7], // Rich 4 - 5 Reel Low Multiplier
+      [0, 0, 0, 0, 4, 4, 5, 5, 5, 5, 5], // Normal 6 - 7 Reel Low Multiplier
+      [0, 0, 0, 0, 4, 4, 5, 5, 5, 5, 5], // Normal 9 - 10 Reel Low Multiplier
+    ],
+    // Diamond Mode
+    [
+      //     -1     0     1     2     3     4     5     6     7     8     9
+      [0, 1, 4, 5, 6, 6, 6, 4, 1, 1, 1], // Rich 2 - 3 Reel High Multiplier
+      [0, 1, 4, 5, 6, 6, 6, 4, 1, 1, 1], // Rich 4 - 5 Reel High Multiplier
+      [0, 1, 4, 5, 6, 6, 6, 4, 1, 1, 1], // Normal 6 - 7 Reel High Multiplier
+      [0, 1, 4, 5, 6, 6, 6, 4, 1, 1, 1], // Normal 9 - 10 Reel High Multiplier
+      [0, 1, 6, 5, 6, 6, 6, 1, 1, 1, 1], // Rich 2 - 3 Reel Normal Multiplier
+      [0, 1, 6, 5, 6, 6, 6, 1, 1, 1, 1], // Rich 4 - 5 Reel Normal Multiplier
+      [0, 1, 6, 5, 6, 6, 6, 1, 1, 1, 1], // Normal 6 - 7 Reel Normal Multiplier
+      [0, 1, 6, 5, 6, 6, 6, 1, 1, 1, 1], // Normal 9 - 10 Reel Normal Multiplier
+      [0, 1, 2, 2, 6, 6, 4, 6, 5, 4, 2], // Rich 2 - 3 Reel Low Multiplier
+      [0, 1, 2, 2, 6, 6, 4, 6, 5, 4, 2], // Rich 4 - 5 Reel Low Multiplier
+      [0, 1, 2, 2, 6, 6, 4, 6, 5, 4, 2], // Normal 6 - 7 Reel Low Multiplier
+      [0, 1, 2, 2, 6, 6, 4, 6, 5, 4, 2], // Normal 9 - 10 Reel Low Multiplier
     ],
   ],
 });

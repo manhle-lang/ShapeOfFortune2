@@ -153,9 +153,7 @@ export class CheatService extends LogicService {
         isGotRecord = true;
       } while (!isGotRecord && !isTimeoutExceed());
     } else if (Object.keys(cheatPayout).some((k) => k.startsWith('isTriggerSymbols_'))) {
-      const meta = CheatService.parseTriggerSymbolsCheat(
-        cheatPayout as Record<string, boolean>,
-      );
+      const meta = CheatService.parseTriggerSymbolsCheat(cheatPayout as Record<string, boolean>);
       if (!meta) {
         throw new Error(`INVALID isTriggerSymbols_ cheat format`);
       }
@@ -177,10 +175,7 @@ export class CheatService extends LogicService {
         // }
 
         isGotRecord = mathSpinResult.winLines.some((line) => {
-          return (
-            line.lineId === lineId &&
-            line.symbolId === symbolId
-          );
+          return line.lineId === lineId && line.symbolId === symbolId;
         });
       } while (!isGotRecord && !isTimeoutExceed());
     }

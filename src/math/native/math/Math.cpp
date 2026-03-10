@@ -96,6 +96,7 @@ namespace GameStruct
 		int profile = 0;
 		GameConfig gameConfig;
 		string _rngCheatSeed;
+		bool featureBuy = false;
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
 				SpinRequest,
@@ -106,7 +107,8 @@ namespace GameStruct
 				betMode,
 				profile,
 				gameConfig,
-				_rngCheatSeed)
+				_rngCheatSeed,
+				featureBuy)
 	};
 }
 
@@ -198,7 +200,7 @@ namespace GameMath
 
 		virtual SpinResult FreeGameSpin(const SpinRequest spinRequest)
 		{
-			SpinResult spinResult;
+			SpinResult spinResult = {};
 
 			// Initialization of the other vector
 			spinResult.payout = 0.0;
@@ -216,7 +218,7 @@ namespace GameMath
 				spinResult.betAmount = spinRequest.betSize * spinRequest.betLevel * this->profile->baseBet;
 				spinResult.maxWinQuota = spinResult.betAmount * (double)this->profile->maxWinMultiplier; // Reset max win quota
 				spinResult.totalFreeSpinsCount = 1;
-				spinResult.featureBuy = true;
+				spinResult.featureBuy = spinRequest.featureBuy;
 
 				// Adjust bet amount if player playing feature buy
 				if (spinResult.featureBuy)
@@ -447,6 +449,9 @@ namespace GameMath
 		{
 			bool featureTriggered = library.RandomInt(1, this->profile->freeGameChance[spinRequest.betMode] + 1) == 1;
 
+			if (spinRequest.featureBuy)
+				featureTriggered = true;
+
 			if (spinRequest.parentSpinResult.freeSpins > 0 || featureTriggered)
 				return FreeGameSpin(spinRequest);
 			else
@@ -601,6 +606,24 @@ namespace GameMath
 
 			library.rgRNGInstance->Enable();
 			SpinResult result = BaseGameLogic::MainGameSpin(spinRequest);
+			library.rgRNGInstance->Disable();
+
+			// return turn back _rngCheatSeed
+			result._rngCheatSeed = _rngCheatSeed;
+			return result;
+		}
+
+		SpinResult FreeGameSpin(const SpinRequest spinRequest) override
+		{
+			if (!spinRequest._rngCheatSeed.empty())
+			{
+				library.rgRNGInstance->SetStateByCheatSeed(spinRequest._rngCheatSeed);
+			}
+
+			string _rngCheatSeed = library.rgRNGInstance->GetCheatSeedFromState();
+
+			library.rgRNGInstance->Enable();
+			SpinResult result = BaseGameLogic::FreeGameSpin(spinRequest);
 			library.rgRNGInstance->Disable();
 
 			// return turn back _rngCheatSeed
