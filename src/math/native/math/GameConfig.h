@@ -31,6 +31,14 @@ struct GameConfig
   vector<vector<int>> diamondMultiplierWeightage;
   vector<vector<int>> mgReelWeightage;
   vector<vector<vector<int>>> multiplierWeightage;
+  vector<int> freeGameChance;
+  vector<int> teaserChance;
+  vector<vector<int>> fgTriangleMultiplierWeightage;
+  vector<vector<int>> fgDiamondMultiplierWeightage;
+  vector<vector<int>> fgReelWeightage;
+  vector<vector<int>> fbReelWeightage;
+  vector<vector<vector<int>>> fgMultiplierWeightage;
+  vector<int> featureBuyCost;
   int baseBet;
   int selectedPayLine;
   int maxWinMultiplier;
@@ -50,6 +58,14 @@ struct GameConfig
       diamondMultiplierWeightage,
       mgReelWeightage,
       multiplierWeightage,
+      freeGameChance,
+      teaserChance,
+      fgTriangleMultiplierWeightage,
+      fgDiamondMultiplierWeightage,
+      fgReelWeightage,
+      fbReelWeightage,
+      fgMultiplierWeightage,
+      featureBuyCost,
       baseBet,
       selectedPayLine,
       maxWinMultiplier)

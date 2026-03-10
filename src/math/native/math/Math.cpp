@@ -28,8 +28,8 @@ namespace GameStruct
 	{
 		double baseBetAmount;
 		double betAmount;
-		double checkPayout;
 		double payout;
+		double checkPayout;
 		double maxWinQuota;
 
 		vector<int> resultVector;
@@ -40,12 +40,14 @@ namespace GameStruct
 		int selectionMode;
 		int reelMode;
 		int multiplier;
-
+		int freeSpins;
+		int totalFreeSpinsCount;
 		bool triggerMaxWin;
+		bool teaser;
+		bool featureBuy;
 		double totalFreeGameWin;
 
 		int winFreeSpins;
-		int freeSpins;
 		double betSize;
 		int betLevel;
 		bool isEndRound;
@@ -56,20 +58,26 @@ namespace GameStruct
 				SpinResult,
 				baseBetAmount,
 				betAmount,
-				checkPayout,
 				payout,
+				checkPayout,
 				maxWinQuota,
+
 				resultVector,
 				multiplierReelVector,
 				winningVector,
 				winLines,
+
 				selectionMode,
 				reelMode,
 				multiplier,
-				triggerMaxWin,
-				totalFreeGameWin,
-				winFreeSpins,
 				freeSpins,
+				totalFreeSpinsCount,
+				triggerMaxWin,
+				teaser,
+				featureBuy,
+				totalFreeGameWin,
+
+				winFreeSpins,
 				betSize,
 				betLevel,
 				isEndRound,
@@ -122,6 +130,14 @@ namespace GameMath
 				this->profile->diamondMultiplierWeightage = gameConfig->diamondMultiplierWeightage;
 				this->profile->mgReelWeightage = gameConfig->mgReelWeightage;
 				this->profile->multiplierWeightage = gameConfig->multiplierWeightage;
+				this->profile->freeGameChance = gameConfig->freeGameChance;
+				this->profile->teaserChance = gameConfig->teaserChance;
+				this->profile->fgTriangleMultiplierWeightage = gameConfig->fgTriangleMultiplierWeightage;
+				this->profile->fgDiamondMultiplierWeightage = gameConfig->fgDiamondMultiplierWeightage;
+				this->profile->fgReelWeightage = gameConfig->fgReelWeightage;
+				this->profile->fbReelWeightage = gameConfig->fbReelWeightage;
+				this->profile->fgMultiplierWeightage = gameConfig->fgMultiplierWeightage;
+				this->profile->featureBuyCost = gameConfig->featureBuyCost;
 			}
 			else
 			{
@@ -168,9 +184,176 @@ namespace GameMath
 					.baseBet = this->profile->baseBet,
 					.selectedPayLine = this->profile->selectedPayLine,
 					.maxWinMultiplier = this->profile->maxWinMultiplier,
-			};
+					.freeGameChance = this->profile->freeGameChance,
+					.teaserChance = this->profile->teaserChance,
+					.fgTriangleMultiplierWeightage = this->profile->fgTriangleMultiplierWeightage,
+					.fgDiamondMultiplierWeightage = this->profile->fgDiamondMultiplierWeightage,
+					.fgReelWeightage = this->profile->fgReelWeightage,
+					.fbReelWeightage = this->profile->fbReelWeightage,
+					.fgMultiplierWeightage = this->profile->fgMultiplierWeightage,
+					.featureBuyCost = this->profile->featureBuyCost};
 
 			return configs;
+		}
+
+		virtual SpinResult FreeGameSpin(const SpinRequest spinRequest)
+		{
+			SpinResult spinResult;
+
+			// Initialization of the other vector
+			spinResult.payout = 0.0;
+			spinResult.checkPayout = 0.0;
+			spinResult.resultVector = vector<int>(library.GetVectorSum(this->profile->reelWindowSize));
+			spinResult.multiplierReelVector = vector<int>(this->profile->reelWindowSize.size(), 0);
+			spinResult.selectionMode = 2;
+			spinResult.multiplier = 0;
+			spinResult.triggerMaxWin = false;
+
+			// New free game triggered
+			if (spinRequest.pastSpinResult.totalFreeSpinsCount == 0)
+			{
+				spinResult.baseBetAmount = spinRequest.betSize * spinRequest.betLevel * this->profile->baseBet;
+				spinResult.betAmount = spinRequest.betSize * spinRequest.betLevel * this->profile->baseBet;
+				spinResult.maxWinQuota = spinResult.betAmount * (double)this->profile->maxWinMultiplier; // Reset max win quota
+				spinResult.totalFreeSpinsCount = 1;
+				spinResult.featureBuy = true;
+
+				// Adjust bet amount if player playing feature buy
+				if (spinResult.featureBuy)
+					spinResult.betAmount = spinRequest.betSize * spinRequest.betLevel * this->profile->featureBuyCost[spinResult.selectionMode];
+			}
+
+			// Continuation from previous free game
+			else
+			{
+				spinResult.baseBetAmount = 0.0;
+				spinResult.betAmount = 0.0;
+				spinResult.totalFreeSpinsCount = spinRequest.pastSpinResult.totalFreeSpinsCount + 1;
+				spinResult.maxWinQuota = spinRequest.pastSpinResult.maxWinQuota;
+				spinResult.featureBuy = spinRequest.pastSpinResult.featureBuy;
+			}
+
+			// Circle Mode
+			if (spinResult.selectionMode == this->profile->circleIndex)
+			{
+				spinResult.multiplierReelVector[0] = library.blockerIndex;
+				spinResult.multiplierReelVector[1] = library.blockerIndex;
+			}
+
+			// Triangle Mode
+			else if (spinResult.selectionMode == this->profile->triangleIndex)
+				spinResult.multiplierReelVector[0] = library.blockerIndex;
+
+			// Get the reel strip mode of the game
+			spinResult.reelMode = library.GetWeightedIndex(this->profile->fgReelWeightage[spinResult.selectionMode]);
+			if (spinResult.featureBuy)
+				spinResult.reelMode = library.GetWeightedIndex(this->profile->fbReelWeightage[spinResult.selectionMode]);
+
+			// Generate reel strip on screen
+			library.GenerateResult(GetReelStrip(spinResult.reelMode, spinResult.selectionMode, true), this->profile->reelWindowSize, spinResult.resultVector);
+
+			// Circle Mode
+			if (spinResult.selectionMode == this->profile->circleIndex)
+			{
+				spinResult.resultVector[library.GetIndexFromColRow(1, 1, this->profile->reelWindowSize)] = library.wildIndex;
+			}
+
+			// Diamond Mode
+			if (spinResult.selectionMode == this->profile->diamondIndex)
+			{
+				spinResult.resultVector[library.GetIndexFromColRow(1, 0, this->profile->reelWindowSize)] = library.blockerIndex;
+				spinResult.resultVector[library.GetIndexFromColRow(1, 2, this->profile->reelWindowSize)] = library.blockerIndex;
+			}
+
+			// First reel and third reel will synced
+			for (int row = 0; row < this->profile->reelWindowSize.size(); row++)
+				spinResult.resultVector[library.GetIndexFromColRow(2, row, this->profile->reelWindowSize)] = spinResult.resultVector[library.GetIndexFromColRow(0, row, this->profile->reelWindowSize)];
+
+			// If there's no payout then alternate the multiplier
+			spinResult.checkPayout = library.GetPayLinePayout(this->profile->selectedPayLine, this->profile->payline, this->profile->paytable, this->profile->reelWindowSize, spinResult.resultVector);
+
+			// For triangle and diamond the first 2 spins are always 0 payout, re-generate the result until no win is generated
+			if (spinResult.selectionMode == this->profile->triangleIndex || spinResult.selectionMode == this->profile->diamondIndex)
+			{
+				while (spinResult.totalFreeSpinsCount < 2 && spinResult.checkPayout > 0.0)
+				{
+					// Get the reel strip mode of the game
+					spinResult.reelMode = library.GetWeightedIndex(this->profile->fgReelWeightage[spinResult.selectionMode]);
+					if (spinResult.featureBuy)
+						spinResult.reelMode = library.GetWeightedIndex(this->profile->fbReelWeightage[spinResult.selectionMode]);
+
+					// Generate reel strip on screen
+					library.GenerateResult(GetReelStrip(spinResult.reelMode, spinResult.selectionMode, true), this->profile->reelWindowSize, spinResult.resultVector);
+
+					// Diamond Mode
+					if (spinResult.selectionMode == this->profile->diamondIndex)
+					{
+						spinResult.resultVector[library.GetIndexFromColRow(1, 0, this->profile->reelWindowSize)] = library.blockerIndex;
+						spinResult.resultVector[library.GetIndexFromColRow(1, 2, this->profile->reelWindowSize)] = library.blockerIndex;
+					}
+
+					// First reel and third reel will synced
+					for (int row = 0; row < this->profile->reelWindowSize.size(); row++)
+						spinResult.resultVector[library.GetIndexFromColRow(2, row, this->profile->reelWindowSize)] = spinResult.resultVector[library.GetIndexFromColRow(0, row, this->profile->reelWindowSize)];
+
+					// If there's no payout then alternate the multiplier
+					spinResult.checkPayout = library.GetPayLinePayout(this->profile->selectedPayLine, this->profile->payline, this->profile->paytable, this->profile->reelWindowSize, spinResult.resultVector);
+				}
+			}
+
+			// If there's already 5 spin and still no win, re-generate the result until a win is generated
+			while (spinResult.totalFreeSpinsCount == 5 && spinResult.checkPayout == 0.0)
+			{
+				// Get the reel strip mode of the game
+				spinResult.reelMode = library.GetWeightedIndex(this->profile->fgReelWeightage[spinResult.selectionMode]);
+				if (spinResult.featureBuy)
+					spinResult.reelMode = library.GetWeightedIndex(this->profile->fbReelWeightage[spinResult.selectionMode]);
+
+				// Generate reel strip on screen
+				library.GenerateResult(GetReelStrip(spinResult.reelMode, spinResult.selectionMode, true), this->profile->reelWindowSize, spinResult.resultVector);
+
+				// Circle Mode
+				if (spinResult.selectionMode == this->profile->circleIndex)
+					spinResult.resultVector[library.GetIndexFromColRow(1, 1, this->profile->reelWindowSize)] = library.wildIndex;
+
+				// Diamond Mode
+				if (spinResult.selectionMode == this->profile->diamondIndex)
+				{
+					spinResult.resultVector[library.GetIndexFromColRow(1, 0, this->profile->reelWindowSize)] = library.blockerIndex;
+					spinResult.resultVector[library.GetIndexFromColRow(1, 2, this->profile->reelWindowSize)] = library.blockerIndex;
+				}
+
+				// First reel and third reel will synced
+				for (int row = 0; row < this->profile->reelWindowSize.size(); row++)
+					spinResult.resultVector[library.GetIndexFromColRow(2, row, this->profile->reelWindowSize)] = spinResult.resultVector[library.GetIndexFromColRow(0, row, this->profile->reelWindowSize)];
+
+				// If there's no payout then alternate the multiplier
+				spinResult.checkPayout = library.GetPayLinePayout(this->profile->selectedPayLine, this->profile->payline, this->profile->paytable, this->profile->reelWindowSize, spinResult.resultVector);
+			}
+
+			// Geenerate multiplier on multiplier reel
+			spinResult.multiplier = GenerateMultiplierReel(spinResult.multiplierReelVector, spinResult.selectionMode, spinResult.reelMode, spinResult.checkPayout, true);
+
+			// Get the payout of the game
+			spinResult.payout = min((double)library.GetPayLinePayout(this->profile->selectedPayLine, this->profile->payline, this->profile->paytable, this->profile->reelWindowSize, spinResult.resultVector) * spinResult.multiplier, spinResult.maxWinQuota);
+
+			// If there's no payout then continue the free game
+			if (spinResult.payout == 0.0)
+				spinResult.freeSpins = 1;
+			else
+				spinResult.freeSpins = 0;
+
+			// Get the front end data for the payline
+			if (spinResult.payout > 0.0)
+			{
+				spinResult.winLines = library.GetPayLineData();
+				spinResult.winningVector = library.GetWinningVector();
+
+				if (spinResult.payout == spinResult.maxWinQuota)
+					spinResult.triggerMaxWin = true;
+			}
+
+			return spinResult;
 		}
 
 		// Function to simulate a spin of the game
@@ -262,8 +445,12 @@ namespace GameMath
 
 		SpinResult Spin(const SpinRequest spinRequest)
 		{
-			// New spin
-			return MainGameSpin(spinRequest);
+			bool featureTriggered = library.RandomInt(1, this->profile->freeGameChance[spinRequest.betMode] + 1) == 1;
+
+			if (spinRequest.parentSpinResult.freeSpins > 0 || featureTriggered)
+				return FreeGameSpin(spinRequest);
+			else
+				return MainGameSpin(spinRequest);
 		}
 
 		~BaseGameLogic()
@@ -276,7 +463,7 @@ namespace GameMath
 		CommonLibrary library;
 
 		// Function to generate the reel strip based on the game mode
-		vector<vector<int>> &GetReelStrip(const int &reelMode, const int &shapeMode)
+		vector<vector<int>> &GetReelStrip(const int &reelMode, const int &shapeMode, bool isFreeGame = false)
 		{
 			// Return reel strips
 			if (shapeMode == this->profile->circleIndex)
@@ -290,7 +477,7 @@ namespace GameMath
 		}
 
 		// Function to generate the multiplier on the multiplier reels
-		int GenerateMultiplierReel(vector<int> &multiplierReelVector, const int &shapeMode, const int &reelMode, const double& checkPayout)
+		int GenerateMultiplierReel(vector<int> &multiplierReelVector, const int &shapeMode, const int &reelMode, const double &checkPayout, const bool &freeGame = false)
 		{
 			int multiplierSum = 0;
 
@@ -305,60 +492,69 @@ namespace GameMath
 				// Check if this position is a blocker
 				if (multiplierReelVector[i] != library.blockerIndex)
 				{
-					// Circle Mode
-					if (shapeMode == this->profile->circleIndex)
-					{
+					if (!freeGame)
 						multiplierReelVector[i] = library.GetWeightedIndex(this->profile->multiplierWeightage[shapeMode][reelMode]) - 1;
-						if (changeMultiplier) multiplierReelVector[i] = library.RandomInt(0, 9 + 1);
-					}
-
-					// Triangle Mode
-					else if (shapeMode == this->profile->triangleIndex)
-					{
-						multiplierReelVector[i] = library.GetWeightedIndex(this->profile->multiplierWeightage[shapeMode][reelMode]) - 1;
-						if (changeMultiplier) multiplierReelVector[i] = library.RandomInt(0, 9 + 1);
-					}
-
-					// Diamond Mode
-					else if (shapeMode == this->profile->diamondIndex)
-					{
-						multiplierReelVector[i] = library.GetWeightedIndex(this->profile->multiplierWeightage[shapeMode][reelMode]) - 1;
-						if (changeMultiplier) multiplierReelVector[i] = library.RandomInt(0, 9 + 1);
-					}
+					else
+						multiplierReelVector[i] = library.GetWeightedIndex(this->profile->fgMultiplierWeightage[shapeMode][reelMode]) - 1;
+					if (changeMultiplier)
+						multiplierReelVector[i] = library.RandomInt(0, 9 + 1);
 				}
 			}
 
-			// Determine the total number of multiplier available
-			// Triangle Mode
-			if (shapeMode == this->profile->triangleIndex)
+			if (!changeMultiplier)
 			{
-				int blankReel = 2 - library.GetWeightedIndex(this->profile->triangleMultiplierWeightage[reelMode]);
-
-				// Determine which reel to be blank
-				if (blankReel > 0)
+				// Determine the total number of multiplier available
+				// Triangle Mode
+				if (shapeMode == this->profile->triangleIndex)
 				{
-					int randomizeIndex = library.RandomInt(1, 2 + 1);
-					multiplierReelVector[randomizeIndex] = library.blankIndex;
-				}
-			}
+					int blankReel;
+					if (!freeGame)
+						blankReel = 2 - library.GetWeightedIndex(this->profile->triangleMultiplierWeightage[reelMode]);
+					else
+						blankReel = 2 - library.GetWeightedIndex(this->profile->fgTriangleMultiplierWeightage[reelMode]);
 
-			// Diamond Mode
-			else if (shapeMode == this->profile->diamondIndex)
-			{
-				int blankReel = 3 - library.GetWeightedIndex(this->profile->diamondMultiplierWeightage[reelMode]);
-
-				// Determine which reel to be blank
-				if (blankReel > 0)
-				{
-					vector<int> blankCol = {0, 1, 2};
-
-					while (blankReel > 0)
+					// Determine which reel to be blank
+					if (blankReel > 0)
 					{
-						int randomizeIndex = library.RandomInt(0, blankCol.size());
-						multiplierReelVector[blankCol[randomizeIndex]] = library.blankIndex;
+						int randomizeIndex = library.RandomInt(1, 2 + 1);
+						if (freeGame)
+							randomizeIndex = 1;
 
-						blankReel--;
-						blankCol.erase(blankCol.begin() + randomizeIndex);
+						if (!freeGame)
+							multiplierReelVector[randomizeIndex] = library.blankIndex;
+						else
+							multiplierReelVector[randomizeIndex] = 0;
+					}
+				}
+
+				// Diamond Mode
+				else if (shapeMode == this->profile->diamondIndex)
+				{
+					int blankReel;
+					if (!freeGame)
+						blankReel = 3 - library.GetWeightedIndex(this->profile->diamondMultiplierWeightage[reelMode]);
+					else
+						blankReel = 3 - library.GetWeightedIndex(this->profile->fgDiamondMultiplierWeightage[reelMode]);
+
+					// Determine which reel to be blank
+					if (blankReel > 0)
+					{
+						vector<int> blankCol = {0, 1, 2};
+
+						while (blankReel > 0)
+						{
+							int randomizeIndex = library.RandomInt(0, blankCol.size());
+							if (freeGame)
+								randomizeIndex = 0;
+
+							if (!freeGame)
+								multiplierReelVector[blankCol[randomizeIndex]] = library.blankIndex;
+							else
+								multiplierReelVector[blankCol[randomizeIndex]] = 0;
+
+							blankReel--;
+							blankCol.erase(blankCol.begin() + randomizeIndex);
+						}
 					}
 				}
 			}
